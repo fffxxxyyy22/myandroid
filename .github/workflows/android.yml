@@ -13,10 +13,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
-          node-version: 18
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Install Dependencies
         run: |
@@ -27,6 +28,16 @@ jobs:
         run: |
           npx cap init "Alphabet Game" "com.example.alphabet" --web-dir=.
           npx cap add android
+
+      - name: Create local.properties
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > android/local.properties
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./android/gradlew
+
+      - name: Build APK
+        run: |
           cd android
           ./gradlew assembleDebug
 
